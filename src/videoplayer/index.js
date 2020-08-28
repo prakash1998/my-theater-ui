@@ -39,38 +39,36 @@ const VideoPlayer = ({ roomId, videoUrl, isAdmin = false }) => {
   }, [connectToServer, roomId]);
 
   const isImmediate = () => {
-    return Math.abs(lastPausedRef.current - lastPausedRef.current) < 100;
+    return Math.abs(lastPlayedRef.current - lastPausedRef.current) < 100;
   };
 
   const onPlay = () => {
-    // console.log("Play clicked...");
-    // lastPlayedRef.current = new Date().valueOf();
-    // setTimeout(() => {
-    //   if (!isImmediate()) {
-    //     console.log("Play sent...");
-    setPlaying(true);
-    if (isAdmin) {
-      sendMessage(getSeekSecond(), true);
-    }
-    //   }
-    // }, 200);
+    console.log("Play clicked...");
+    lastPlayedRef.current = new Date().valueOf();
+    setTimeout(() => {
+      if (!isImmediate()) {
+        console.log("Play sent...");
+        setPlaying(true);
+        if (isAdmin) {
+          sendMessage(getSeekSecond(), true);
+        }
+      }
+    }, 200);
   };
 
   const onPause = () => {
     console.log("Pause clicked...");
-    // if (!realPlayPauseRef.current) {
-    //   realPlayPauseRef.current = true;
-    // }
-    // lastPausedRef.current = new Date().valueOf();
-    // setTimeout(() => {
-    //   if (!isImmediate()) {
-    //     console.log("Pause sent...");
-    setPlaying(false);
-    if (isAdmin) {
-      sendMessage(getSeekSecond(), false);
-    }
-    //   }
-    // }, 200);
+
+    lastPausedRef.current = new Date().valueOf();
+    setTimeout(() => {
+      if (!isImmediate()) {
+        console.log("Pause sent...");
+        setPlaying(false);
+        if (isAdmin) {
+          sendMessage(getSeekSecond(), false);
+        }
+      }
+    }, 200);
   };
 
   const onProgress = (e) => {
