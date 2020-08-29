@@ -11,16 +11,18 @@ const WebSocketContext = React.createContext(initialContext);
 
 export default WebSocketContext;
 
-const WEB_SOCKET_CHAT_URL =
-  process.env.WEB_SOCKET_CHAT_URL || "wss://my-theater-1234.herokuapp.com/theater";
+const WEB_SOCKET_URL =
+  process.env.REACT_APP_WEB_SOCKET_URL || "wss://my-theater-1234.herokuapp.com/theater";
 
 export const WebSocketContextProvider = ({ children }) => {
   const [webSocket, setWebSocket] = useState(null);
 
+  console.log({ envs: process.env });
+
   const connectToServer = useCallback(
     (roomId = "", subscriptionFunction = (_) => _, video) => {
       if (webSocket == null) {
-        const ws = new WebSocket(`${WEB_SOCKET_CHAT_URL}?room=${roomId}`);
+        const ws = new WebSocket(`${WEB_SOCKET_URL}?room=${roomId}`);
         ws.onopen = () => {
           // on connecting, do nothing but log it to the console
           console.log("connected");

@@ -3,6 +3,7 @@ import React, { useState, useRef, useContext, useEffect } from "react";
 import ReactPlayer from "react-player";
 import { WebSocketContext } from "../context";
 
+const PROGRESS_INTERVAL = 2000;
 const VideoPlayer = ({ roomId, videoUrl, isAdmin = false }) => {
   const { sendMessage, connectToServer } = useContext(WebSocketContext);
 
@@ -25,18 +26,24 @@ const VideoPlayer = ({ roomId, videoUrl, isAdmin = false }) => {
   });
 
   const [playing, setPlaying] = useState(true);
+
+  // const [volume, setVolume] = useState(0.8);
+
   const lastPlayedRef = useRef(new Date().valueOf());
   const lastPausedRef = useRef(0);
 
   useEffect(() => {
     const onMessage = (msg) => {
-      console.log({ msg });
-      setPlaying(msg.playing);
-      if (!msg.playing || Math.abs(getSeekSecond() - msg.seek) > 2)
-        seekToSecond(msg.seek);
+      console.log("message received ", msg);
+      if (!isAdmin) {
+        console.log({ msg });
+        setPlaying(msg.playing);
+        if (!msg.playing || Math.abs(getSeekSecond() - msg.seek) > 2)
+          seekToSecond(msg.seek);
+      }
     };
     connectToServer(roomId, onMessage);
-  }, [connectToServer, roomId]);
+  }, [connectToServer, isAdmin, roomId]);
 
   const isImmediate = () => {
     return Math.abs(lastPlayedRef.current - lastPausedRef.current) < 100;
@@ -74,13 +81,14 @@ const VideoPlayer = ({ roomId, videoUrl, isAdmin = false }) => {
   const onProgress = (e) => {
     console.log({ playing, e });
     if (isAdmin) {
+      console.log("message sent");
       sendMessage(getSeekSecond(), playing);
     }
   };
 
   return (
     <div>
-      <h3>video player</h3>
+      {/* <h3>video player</h3>
       <button
         onClick={() => {
           playerRef.current.seekTo(50);
@@ -95,22 +103,30 @@ const VideoPlayer = ({ roomId, videoUrl, isAdmin = false }) => {
       >
         {playing ? "Pause" : "Play"}
       </button>
-      <div>
-        <ReactPlayer
-          ref={playerRef}
-          url={videoUrl}
-          playing={playing}
-          onPlay={onPlay}
-          onPause={onPause}
-          onProgress={onProgress}
-          controls={isAdmin}
-          config={{
-            youtube: {
-              playerVars: { rel: 0 },
-            },
-          }}
-        />
-      </div>
+      <div> */}
+      <ReactPlayer
+        width="100hw"
+        height="100vh"
+        style={{ overflow: "hidden" }}
+        ref={playerRef}
+        url={videoUrl}
+        playing={playing}
+        // volume={volume}
+        onPlay={onPlay}
+        onPause={onPause}
+        onProgress={onProgress}
+        onSeek={(seek) => {
+          console.log({ seek });
+        }}
+        controls={isAdmin}
+        progressInterval={PROGRESS_INTERVAL}
+        config={{
+          youtube: {
+            playerVars: { rel: 0 },
+          },
+        }}
+      />
+      {/* </div> */}
     </div>
   );
 };

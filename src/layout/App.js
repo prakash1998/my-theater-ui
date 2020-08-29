@@ -1,56 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 
 import VideoPlayer from "../videoplayer";
 
 const urlParams = new URLSearchParams(window.location.search);
-const origin = window.location.origin;
+// const origin = window.location.origin;
 const urlRoomId = urlParams.get("room");
 const urlVideoLink = urlParams.get("url");
+const isAdmin = Boolean(urlParams.get("admin"));
 
 function App() {
-  const [room, setRoom] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-
-  const [urlToShare, setUrlToShare] = useState("");
-
-  const [showVideo, setShowVideo] = useState(false);
-
-  const isAdmin = urlRoomId == null;
+  // const isAdmin = urlRoomId == null;
 
   return (
     <div>
-      {(urlRoomId && urlVideoLink) ||
-      (showVideo && room.trim() && videoUrl.trim()) ? (
+      {/* {(urlRoomId && urlVideoLink) ||
+     (showVideo && room.trim() && videoUrl.trim()) ? ( */}
+
+      {urlRoomId && urlVideoLink ? (
         <div>
           <VideoPlayer
-            roomId={urlRoomId || room}
-            videoUrl={urlVideoLink || videoUrl}
+            roomId={urlRoomId}
+            videoUrl={urlVideoLink}
             isAdmin={isAdmin}
           />
-          <br />
-          Video Url : {urlToShare}
         </div>
       ) : (
-        <div>
-          Room ID:
-          <input value={room} onChange={(e) => setRoom(e.target.value)} />
-          <br />
-          Video URL:
-          <input
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-          />
-          <br />
-          <button
-            onClick={() => {
-              setUrlToShare(`${origin}?room=${room}&url=${videoUrl}`);
-              setShowVideo(true);
-            }}
-          >
-            {" "}
-            JOIN{" "}
-          </button>
-        </div>
+        <div>Not Enough Parameters available to play video</div>
       )}
     </div>
   );
