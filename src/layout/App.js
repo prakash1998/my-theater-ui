@@ -11,6 +11,7 @@ const isAdmin = Boolean(urlParams.get("admin"));
 function App() {
   // const isAdmin = urlRoomId == null;
 
+  console.log({ urlRoomId, urlVideoLink, isAdmin });
   return (
     <div>
       {/* {(urlRoomId && urlVideoLink) ||

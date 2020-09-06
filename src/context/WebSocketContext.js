@@ -12,12 +12,15 @@ const WebSocketContext = React.createContext(initialContext);
 export default WebSocketContext;
 
 const WEB_SOCKET_URL =
-  process.env.REACT_APP_WEB_SOCKET_URL || "wss://my-theater-1234.herokuapp.com/theater";
+  process.env.NODE_ENV === "production" || true
+    ? process.env.REACT_APP_WEB_SOCKET_URL ||
+      "wss://my-theater-1234.herokuapp.com/theater"
+    : "ws://localhost:8080/theater";
 
 export const WebSocketContextProvider = ({ children }) => {
   const [webSocket, setWebSocket] = useState(null);
 
-  console.log({ envs: process.env });
+  console.log({ envs: process.env, WEB_SOCKET_URL });
 
   const connectToServer = useCallback(
     (roomId = "", subscriptionFunction = (_) => _, video) => {
@@ -43,10 +46,12 @@ export const WebSocketContextProvider = ({ children }) => {
     [webSocket]
   );
 
-  const sendMessage = (seek, playing) => {
-    const message = { seek, playing };
-    webSocket && webSocket.send(JSON.stringify(message));
-  };
+  const sendMessage = useCallback(
+    (messageJson) => {
+      webSocket && webSocket.send(JSON.stringify(messageJson));
+    },
+    [webSocket]
+  );
 
   return (
     <WebSocketContext.Provider
